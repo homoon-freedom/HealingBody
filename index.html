@@ -31,7 +31,7 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 0.95rem;
-            transition: 0.3s;
+            transition: 0.3;
             color: #555;
         }
         .tab-button.active {
@@ -43,13 +43,12 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- [코드 1: 루이스 헤이 스타일 - 크기 축소 버전] --- */
+        /* --- [코드 1: 루이스 헤이 스타일] --- */
         #healing-section { --primary: #6c5ce7; --secondary: #a29bfe; --bg: #f8f9fa; --accent: #ffeaa7; }
         .header-h { text-align: center; margin-bottom: 30px; }
         .header-h h1 { font-size: 2.2em; color: var(--primary); margin-bottom: 10px; }
         .header-h p { font-size: 1em; color: #666; }
         
-        /* 카드 컨테이너 크기 및 배치 조정 */
         .card-container-healing { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
@@ -57,60 +56,72 @@
             max-width: 1200px; 
             margin: 0 auto; 
         }
-        /* 카드 높이를 750px -> 450px로 축소 */
         .card-h { perspective: 2000px; height: 450px; cursor: pointer; }
         .card-inner-h { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 25px; }
         .card-h.flipped .card-inner-h { transform: rotateY(180deg); }
         
         .card-front-h, .card-back-h { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; border-radius: 25px; }
-        
         .card-front-h { background-color: white; border: 1px solid #eee; }
-        /* 글씨 크기 대폭 축소 */
-        .part-tag-h { 
-            background: var(--secondary); 
-            color: white; 
-            padding: 8px 20px; 
-            border-radius: 40px; 
-            font-size: 1.1em; 
-            margin-bottom: 20px; 
-            font-weight: 800; 
-        }
-        .symptom-name-h { 
-            font-size: 2.2em; 
-            font-weight: 900; 
-            color: var(--primary); 
-            word-break: keep-all; 
-            line-height: 1.2; 
-        }
-
+        .part-tag-h { background: var(--secondary); color: white; padding: 8px 20px; border-radius: 40px; font-size: 1.1em; margin-bottom: 20px; font-weight: 800; }
+        .symptom-name-h { font-size: 2.2em; font-weight: 900; color: var(--primary); word-break: keep-all; line-height: 1.2; }
         .card-back-h { background-color: var(--primary); color: white; transform: rotateY(180deg); }
         .back-part-info-h { font-size: 1.1em; font-weight: 800; color: var(--accent); margin-bottom: 20px; background: rgba(255, 255, 255, 0.1); padding: 10px 20px; border-radius: 8px; border: 1px solid var(--accent); width: 90%; }
         .back-section-title-h { font-size: 0.9em; font-weight: bold; color: #efecff; margin-bottom: 8px; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 3px; }
         .cause-h { font-size: 0.9em; margin-bottom: 25px; font-weight: 500; line-height: 1.5; word-break: keep-all; width: 100%; }
         .affirmation-h { font-size: 1.0em; font-weight: 700; background: rgba(255,255,255,0.2); padding: 8px; border-radius: 8px; line-height: 1.4; word-break: keep-all; border: 2px dashed var(--accent); width: 100%; box-sizing: border-box; }
-        
         .click-hint-h { margin-top: 25px; font-size: 0.85em; color: #b2bec3; animation: blink 2s infinite; }
-        /* --- [코드 1 종료] --- */
 
-        /* --- [코드 2: 상세 신체 감각 스타일 유지] --- */
+        /* --- [코드 2: 상세 신체 감각 사전 - 좌우 분할 버전] --- */
         #sensation-section { --primary-bg: #f0f4f8; --card-front: #ffffff; --card-back: #455a64; --text-main: #2c3e50; --accent: #4a90e2; }
         .header-s { text-align: center; margin-bottom: 30px; }
         .header-s h1 { color: var(--text-main); margin-bottom: 10px; font-size: 1.4rem; }
         .header-s p { color: #666; font-size: 0.85rem; }
         
-        .card-container-sensation { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; width: 100%; max-width: 1000px; margin: 0 auto; align-items: start; }
-        .card-s { perspective: 1000px; min-height: 280px; cursor: pointer; position: relative; }
+        .card-container-sensation { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; width: 100%; max-width: 1000px; margin: 0 auto; }
+        .card-s { perspective: 1000px; min-height: 300px; cursor: pointer; position: relative; }
         .card-inner-s { position: absolute; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         .card-s.flipped .card-inner-s { transform: rotateY(180deg); }
-        .card-front-s, .card-back-s { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; border-radius: 15px; box-sizing: border-box; border: 1px solid rgba(0,0,0,0.05); }
+        .card-front-s, .card-back-s { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; border-radius: 15px; box-sizing: border-box; border: 1px solid rgba(0,0,0,0.05); overflow: hidden; }
+        
         .card-front-s { background-color: var(--card-front); align-items: center; justify-content: center; padding: 15px; }
         .category-s { font-size: 0.75rem; color: var(--accent); margin-bottom: 8px; font-weight: 600; }
         .part-name-s { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
-        .card-back-s { background-color: var(--card-back); color: white; transform: rotateY(180deg); padding: 0; overflow: hidden; }
-        .back-header-s { background-color: rgba(0,0,0,0.2); padding: 12px; font-size: 0.9rem; font-weight: 700; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .back-content-s { padding: 15px; font-size: 0.85rem; line-height: 1.7; text-align: left; flex-grow: 1; overflow-y: auto; }
-        .sensation-item-s { display: block; margin-bottom: 4px; word-break: keep-all; }
-        /* --- [코드 2 종료] --- */
+        
+        /* 뒷면 레이아웃 수정: 좌우 분할 */
+        .card-back-s { background-color: var(--card-back); color: white; transform: rotateY(180deg); }
+        .back-header-s { background-color: rgba(0,0,0,0.2); padding: 10px; font-size: 0.9rem; font-weight: 700; text-align: center; }
+        
+        /* 좌우를 가르는 컨테이너 */
+        .split-container-s { 
+            display: flex; 
+            flex: 1; 
+            position: relative; 
+            padding: 10px 0;
+            align-items: flex-start;
+        }
+        /* 중앙 점선 */
+        .split-container-s::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 3%;
+            bottom: 3%;
+            width: 1px;
+            border-left: 1px dashed rgba(255,255,255,0.3);
+            transform: translateX(-50%);
+        }
+        .side-s { 
+            flex: 1; 
+            padding: 0 10px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px;
+            font-size: 0.82rem;
+        }
+        .sensation-item-s { 
+            word-break: keep-all; 
+            line-height: 1.4; 
+        }
 
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         
@@ -139,13 +150,12 @@
 <div id="sensation-section" class="tab-content">
     <div class="header-s">
         <h1>상세 신체 감각 사전</h1>
-        <p>한 번에 한 부위씩, 몸의 느낌을 세밀하게 관찰합니다.</p>
+        <p>중앙선을 기준으로 감각들을 나누어 관찰해보세요.</p>
     </div>
     <div class="card-container-sensation" id="sensationContainer"></div>
 </div>
 
 <script>
-    // 탭 전환 로직
     function openTab(tabId, btn) {
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
@@ -153,9 +163,9 @@
         btn.classList.add('active');
     }
 
-    // [데이터 1: 루이스 헤이 치유 카드]
+    // 데이터 1 렌더링 (기존 유지)
     const healingData = [
-        { part: "머리", disease: "두통 / 편두통", cause: "완벽주의, 자신을 향한 비판, 감정적 억제<br>완벽주의, 자신을 향한 비판", aff: "나는 나를 사랑합니다. 내 마음은 늘 평화롭습니다." },
+        { part: "머리", disease: "두통 / 편두통", cause: "완벽주의, 자신을 향한 비판, 감정적 억제", aff: "나는 나를 사랑합니다. 내 마음은 늘 평화롭습니다." },
         { part: "눈", disease: "시력 저하", cause: "앞날이나 현재의 삶을 직시하기 두려워함", aff: "나는 명료하게 봅니다. 삶의 모든 순간을 환영합니다." },
         { part: "목", disease: "목의 통증", cause: "상황의 다른 면 보기를 거부함, 고집스러움", aff: "나는 유연하고 부드럽습니다. 모든 관점을 수용합니다." },
         { part: "어깨", disease: "어깨 결림", cause: "삶을 무거운 짐으로 여김, 과도한 책임감", aff: "나는 가볍습니다. 우주가 항상 나를 지탱해 줍니다." },
@@ -164,8 +174,7 @@
         { part: "허리", disease: "요통 (등 하부)", cause: "경제적인 두려움, 정서적인 지지 부족", aff: "나의 미래는 풍요롭고 안전합니다. 삶을 신뢰합니다." },
         { part: "무릎", disease: "무릎 통증", cause: "자존심 때문에 굽히지 못함, 유연성 결여", aff: "나는 기꺼이 용서합니다. 삶의 흐름에 순응합니다." },
         { part: "피부", disease: "피부 트러블", cause: "자신의 가치를 낮게 평가함, 안전하지 못한 느낌", aff: "나는 있는 그대로 아름답습니다. 나는 안전합니다." },
-        { part: "배", disease: "설사", cause: "두려움: 현재나 매래에 대한 불안감이 큼.<br>거절과 거부: 상황을 받아들이지 못하고 빨리 밀어냄.<br>도망: 직면하기 힘든 문제로부터 도망침.", aff: "나의 섭취,소화,배설은 완벽한 질서 속에 있고 나는 삶과 화해하며 평온다." },
-
+        { part: "배", disease: "설사", cause: "두려움, 거절과 거부, 직면하기 힘든 상황", aff: "나의 소화와 배설은 완벽한 질서 속에 있습니다." }
     ];
 
     const hContainer = document.getElementById('healingContainer');
@@ -173,9 +182,7 @@
         const cardWrapper = document.createElement('div');
         cardWrapper.className = 'card-h';
         cardWrapper.onclick = function() {
-            const isFlipped = this.classList.contains('flipped');
-            document.querySelectorAll('.card-h').forEach(c => c.classList.remove('flipped'));
-            if (!isFlipped) this.classList.add('flipped');
+            this.classList.toggle('flipped');
         };
         cardWrapper.innerHTML = `
             <div class="card-inner-h">
@@ -190,31 +197,36 @@
                     <div class="cause-h">${item.cause}</div>
                     <div class="back-section-title-h">치유의 확언</div>
                     <div class="affirmation-h">"${item.aff}"</div>
-                    <div class="click-hint-h" style="color: #efecff; margin-top: 15px;">다시 터치하여 앞면으로</div>
                 </div>
             </div>`;
         hContainer.appendChild(cardWrapper);
     });
 
-    // [데이터 2: 상세 신체 감각 사전]
+    // 데이터 2 렌더링 (좌우 분할 로직 적용)
     const sensations = [
-        { cat: "머리/신경", part: "머리 속", feel: "맑음, 멍함, 지끈거림, 핑 도는, 꽉 찬 압박감, 무거운, 가벼운, 맥박이 뛰는" },
-        { cat: "머리/신경", part: "얼굴/눈/입", feel: "눈이 침침함, 안면 근육 경직, 입안이 마름, 화끈거림, 실룩거림, 얼얼함" },
-        { cat: "호흡/흉부", part: "목/기도", feel: "이물감(매핵기), 조임, 탁 막힘, 서늘한 공기 흐름, 가래 낀 느낌, 메임" },
-        { cat: "호흡/흉부", part: "가슴/폐", feel: "답답함, 팽창함, 뻥 뚫림, 짓눌림, 숨 가쁨, 가슴이 미어짐, 텅 빈 느낌" },
-        { cat: "순환/에너지", part: "심장", feel: "두근거림(빠름), 덜컥거림, 잔잔함, 쿵쾅거림, 불규칙한 박동, 벅차오름" },
-        { cat: "소화/중심", part: "명치/위", feel: "딱딱하게 굳음, 꼬이는, 쥐어짜는, 메스꺼움, 뒤틀림, 묵직함, 허전함" },
-        { cat: "소화/중심", part: "아랫배/장", feel: "부글거림, 꾸륵거림, 싸한 느낌, 가스 찬, 따뜻함, 팽팽함, 뒤틀림" },
-        { cat: "근골격", part: "어깨/등", feel: "결림, 뻐근함, 천근만근 무거움, 타는 듯한, 담 걸린, 굳어있음, 이완됨" },
-        { cat: "사지/피부", part: "팔/다리/손발", feel: "힘이 빠짐, 저림, 찌릿찌릿함, 나른함, 부어있는, 가려움, 서늘함, 온기" },
-        { cat: "전신", part: "피부 겉면", feel: "소름 돋음, 땀이 남, 전율, 따끔거림, 스멀거림, 예민함, 무감각함" }
+        { cat: "머리/신경", part: "머리 속", feel: "맑음, 멍함, 지끈거림, 핑 도는, 압박감, 무거운, 가벼운, 맥박뜀, 묵직함" },
+        { cat: "머리/신경", part: "얼굴/눈/입", feel: "침침함, 경직됨, 입마름, 화끈함, 실룩임, 얼얼함, 가려움, 따끔" },
+        { cat: "호흡/흉부", part: "목/기도", feel: "이물감, 조임, 탁 막힘, 서늘함, 가래낌, 메임, 간질임, 부음" },
+        { cat: "호흡/흉부", part: "가슴/폐", feel: "답답함, 팽창함, 뻥 뚫림, 짓눌림, 숨 가쁨, 미어짐, 텅 빔, 울렁임" },
+        { cat: "순환/에너지", part: "심장", feel: "두근거림, 덜컥거림, 잔잔함, 쿵쾅거림, 불규칙함, 벅참, 조여듦, 느림" },
+        { cat: "소화/중심", part: "명치/위", feel: "딱딱함, 꼬이는, 쥐어짜는, 메스꺼움, 뒤틀림, 묵직함, 허전함, 쓰림" },
+        { cat: "소화/중심", part: "아랫배/장", feel: "부글거림, 꾸륵거림, 싸한 느낌, 가스참, 따뜻함, 팽팽함, 뒤틀림, 쑥 내려감" },
+        { cat: "근골격", part: "어깨/등", feel: "결림, 뻐근함, 무거움, 타는 듯한, 담 걸림, 굳음, 이완됨, 쑤심" },
+        { cat: "사지/피부", part: "팔/다리/손발", feel: "힘빠짐, 저림, 찌릿함, 나른함, 부어있는, 가려움, 서늘함, 온기" },
+        { cat: "전신", part: "피부 겉면", feel: "소름, 땀남, 전율, 따끔함, 스멀거림, 예민함, 무감각, 화끈화끈" }
     ];
 
     const sContainer = document.getElementById('sensationContainer');
     sensations.forEach(item => {
         const card = document.createElement('div');
         card.className = 'card-s';
-        const feelList = item.feel.split(', ').map(f => `<span class="sensation-item-s">• ${f}</span>`).join('');
+        
+        // 감각 단어들을 반으로 나눔
+        const feelArray = item.feel.split(', ');
+        const half = Math.ceil(feelArray.length / 2);
+        const leftSide = feelArray.slice(0, half).map(f => `<span class="sensation-item-s">• ${f}</span>`).join('');
+        const rightSide = feelArray.slice(half).map(f => `<span class="sensation-item-s">• ${f}</span>`).join('');
+
         card.innerHTML = `
             <div class="card-inner-s">
                 <div class="card-front-s">
@@ -222,15 +234,14 @@
                     <span class="part-name-s">${item.part}</span>
                 </div>
                 <div class="card-back-s">
-                    <div class="back-header-s">${item.part}</div>
-                    <div class="back-content-s">${feelList}</div>
+                    <div class="back-header-s">${item.part} 감각</div>
+                    <div class="split-container-s">
+                        <div class="side-s">${leftSide}</div>
+                        <div class="side-s">${rightSide}</div>
+                    </div>
                 </div>
             </div>`;
-        card.addEventListener('click', () => {
-            const isCurrentlyFlipped = card.classList.contains('flipped');
-            document.querySelectorAll('.card-s').forEach(c => c.classList.remove('flipped'));
-            if (!isCurrentlyFlipped) card.classList.add('flipped');
-        });
+        card.addEventListener('click', () => card.classList.toggle('flipped'));
         sContainer.appendChild(card);
     });
 </script>
