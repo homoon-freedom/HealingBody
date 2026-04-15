@@ -3,22 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>마음 & 신체 통합 관찰 도구</title>
+    <title>마음 & 신체 통합 관찰 도구 (모달형)</title>
     <style>
-        /* [공통 레이아웃 및 탭 스타일] */
+        /* [공통 레이아웃] */
         :root {
             --tab-bg: #e0e6ed;
             --tab-active: #6c5ce7;
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --accent: #ffeaa7;
+            --text-main: #2c3e50;
+            --card-back-s: #455a64;
         }
-        body { margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; background-color: #f8f9fa; }
+        body { margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; background-color: #f8f9fa; color: #333; }
         
+        /* 탭 스타일 */
         .tabs {
             display: flex;
             justify-content: center;
             background: var(--tab-bg);
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
             padding: 10px;
             gap: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -30,112 +36,159 @@
             border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.95rem;
             transition: 0.3s;
             color: #555;
         }
-        .tab-button.active {
-            background: var(--tab-active);
-            color: white;
-        }
-        .tab-content { display: none; padding: 20px; animation: fadeIn 0.4s; }
+        .tab-button.active { background: var(--tab-active); color: white; }
+        .tab-content { display: none; padding: 20px; max-width: 800px; margin: 0 auto; animation: fadeIn 0.4s; }
         .tab-content.active { display: block; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- [코드 1: 루이스 헤이 스타일] --- */
-        #healing-section { --primary: #6c5ce7; --secondary: #a29bfe; --bg: #f8f9fa; --accent: #ffeaa7; }
-        .header-h { text-align: center; margin-bottom: 20px;}
-        .header-h h1 { font-size: 2.0em; color: var(--primary); margin-bottom: 5px; }
-        .header-h p { font-size: 1em; color: #666; }
-        
-        .card-container-healing { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 20px; 
-            max-width: 900px;
-            margin: 0 auto; 
+        /* 리스트 그리드 스타일 */
+        .list-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
         }
-        .card-h { perspective: 2000px; height: 500px; cursor: pointer; }
-        .card-inner-h { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 25px; }
-        .card-h.flipped .card-inner-h { transform: rotateY(180deg); }
+        .list-item {
+            background: white;
+            padding: 20px 10px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #eee;
+        }
+        .list-item:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        .list-item .item-part { font-size: 0.8rem; color: var(--secondary); font-weight: bold; display: block; margin-bottom: 5px; }
+        .list-item .item-name { font-size: 1.05rem; font-weight: 700; color: var(--text-main); }
+
+        /* 모달 스타일 */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            width: 90%;
+            max-width: 420px;
+            position: relative;
+            perspective: 2000px;
+        }
+        .close-modal {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        /* [카드 스타일] */
+        .card-h, .card-s { width: 100%; height: 550px; cursor: pointer; position: relative; }
+        .card-inner {
+            position: relative; width: 100%; height: 100%;
+            text-align: center; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .flipped .card-inner { transform: rotateY(180deg); }
         
-        .card-front-h, .card-back-h { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; box-sizing: border-box; border-radius: 25px; }
-        .card-front-h { background-color: white; border: 1px solid #eee; }
+        .card-front, .card-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; display: flex; flex-direction: column;
+            padding: 25px; box-sizing: border-box; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        /* 마음 치유 카드 컬러 */
+        .front-h { background: white; border: 1px solid #eee; justify-content: center; align-items: center; }
+        .back-h { background: var(--primary); color: white; transform: rotateY(180deg); justify-content: center; align-items: center; }
+        .part-tag-h { background: var(--secondary); color: white; padding: 8px 20px; border-radius: 40px; font-size: 1rem; margin-bottom: 15px; font-weight: 800; }
+        .symptom-name-h { font-size: 2.1rem; font-weight: 900; color: var(--primary); line-height: 1.2; margin-bottom: 12px; }
+        .symptom-desc-h { font-size: 0.95rem; color: #7f8c8d; line-height: 1.5; margin-bottom: 20px; }
+        .back-part-info-h { font-size: 1.1rem; font-weight: 800; color: var(--accent); margin-bottom: 20px; background: rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 8px; border: 1px solid var(--accent); width: 100%; }
+        .back-section-title-h { font-size: 0.9rem; font-weight: bold; color: #efecff; margin-bottom: 8px; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 3px; width: 100%; }
+        .cause-h { font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5; word-break: keep-all; }
+        .affirmation-h { font-size: 1rem; font-weight: 700; background: rgba(255,255,255,0.2); padding: 15px; border-radius: 12px; border: 2px dashed var(--accent); line-height: 1.4; width: 100%; box-sizing: border-box; }
+
+        /* 신체 감각 사전 컬러 (뒷면 레이아웃 통합 및 스크롤 추가) */
+        .front-s { background: white; border: 1px solid #eee; justify-content: center; align-items: center; }
+        .back-s { background: var(--card-back-s); color: white; transform: rotateY(180deg); padding: 0 !important; overflow: hidden; }
+        .category-s { font-size: 1rem; color: #4a90e2; font-weight: 600; margin-bottom: 10px; }
+        .part-name-s { font-size: 2rem; font-weight: 700; color: var(--text-main); }
+        .back-header-s { background: rgba(0,0,0,0.3); width: 100%; padding: 15px; font-weight: 700; font-size: 1.1rem; text-align: center; }
         
-        .part-tag-h { background: var(--secondary); color: white; padding: 8px 20px; border-radius: 40px; font-size: 1.1em; margin-bottom: 15px; font-weight: 800; }
-        .symptom-name-h { font-size: 2.1em; font-weight: 900; color: var(--primary); word-break: keep-all; line-height: 1.2; margin-bottom: 12px; }
-        .symptom-desc-h { font-size: 0.95rem; color: #7f8c8d; line-height: 1.5; word-break: keep-all; margin-bottom: 20px; padding: 0 10px; }
+        .sensation-list-container {
+            padding: 15px 20px;
+            overflow-y: auto;
+            flex: 1;
+            text-align: left;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .sensation-item {
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+        .sensation-label {
+            font-weight: bold;
+            color: var(--accent);
+            display: block;
+            font-size: 1.05rem;
+            margin-bottom: 2px;
+        }
+        .sensation-explain {
+            font-size: 0.85rem;
+            color: #d1d8e0;
+            line-height: 1.4;
+        }
 
-        .card-back-h { background-color: var(--primary); color: white; transform: rotateY(180deg); }
-        .back-part-info-h { font-size: 1.1em; font-weight: 800; color: var(--accent); margin-bottom: 20px; background: rgba(255, 255, 255, 0.1); padding: 10px 20px; border-radius: 8px; border: 1px solid var(--accent); width: 90%; }
-        .back-section-title-h { font-size: 0.9em; font-weight: bold; color: #efecff; margin-bottom: 8px; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 3px; }
-        .cause-h { font-size: 0.9em; margin-bottom: 25px; font-weight: 500; line-height: 1.5; word-break: keep-all; width: 100%; }
-        .affirmation-h { font-size: 1.0em; font-weight: 700; background: rgba(255,255,255,0.2); padding: 12px; border-radius: 8px; line-height: 1.4; word-break: keep-all; border: 2px dashed var(--accent); width: 100%; box-sizing: border-box; }
-        .click-hint-h { margin-top: 15px; font-size: 0.85em; color: #b2bec3; animation: blink 2s infinite; }
-
-        /* --- [코드 2: 상세 신체 감각 사전] --- */
-        #sensation-section { --primary-bg: #f0f4f8; --card-front: #ffffff; --card-back: #455a64; --text-main: #2c3e50; --accent: #4a90e2; }
-        .header-s { text-align: center; margin-bottom: 20px; }
-        .header-s h1 { color: var(--text-main); margin-bottom: 5px; font-size: 2.0rem; }
-        .header-s p { color: #666; font-size: 1rem; }
-
-        .card-container-sensation { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; max-width: 900px; margin: 0 auto; }
-        .card-s { perspective: 1000px; min-height: 320px; cursor: pointer; position: relative; }
-        .card-inner-s { position: absolute; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .card-s.flipped .card-inner-s { transform: rotateY(180deg); }
-        .card-front-s, .card-back-s { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; border-radius: 15px; box-sizing: border-box; border: 1px solid rgba(0,0,0,0.05); overflow: hidden; }
-        .card-front-s { background-color: var(--card-front); align-items: center; justify-content: center; padding: 15px; }
-        .category-s { font-size: 1.1rem; color: var(--accent); margin-bottom: 8px; font-weight: 600; }
-        .part-name-s { font-size: 2.0rem; font-weight: 700; color: var(--text-main); }
-        .card-back-s { background-color: var(--card-back); color: white; transform: rotateY(180deg); }
-        .back-header-s { background-color: rgba(0,0,0,0.2); padding: 12px; font-size: 1.2rem; font-weight: 700; text-align: center; }
-        .split-container-s { display: flex; flex: 1; position: relative; padding: 15px 10px; align-items: flex-start; }
-        .split-container-s::after { content: ''; position: absolute; left: 50%; top: 10%; bottom: 10%; width: 1px; border-left: 1px dashed rgba(255,255,255,0.3); transform: translateX(-50%); }
-        .side-s { flex: 1; padding: 0 10px; display: flex; flex-direction: column; gap: 8px; font-size: 1.1rem; }
-        .sensation-item-s { word-break: keep-all; line-height: 1.4; }
-
+        .click-hint { margin-top: 20px; font-size: 0.8rem; color: #bbb; animation: blink 2s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-        @media (max-width: 600px) { .card-h { height: 480px; } .symptom-name-h { font-size: 1.8em; } }
     </style>
 </head>
 <body>
 
 <div class="tabs">
-    <button class="tab-button active" onclick="openTab('healing-section', this)">🌿 마음 치유 카드</button>
-    <button class="tab-button" onclick="openTab('sensation-section', this)">🔍 신체 감각 사전</button>
+    <button class="tab-button active" onclick="openTab('healing-section', this)">🌿 마음 치유</button>
+    <button class="tab-button" onclick="openTab('sensation-section', this)">🔍 감각 사전</button>
 </div>
 
 <div id="healing-section" class="tab-content active">
-    <div class="header-h">
-        <h1>마음 치유 카드</h1>
-        <p>증상을 마주하고 그 이면의 마음을 들여다봅니다.</p>
+    <div style="text-align:center;">
+        <h1 style="color:var(--primary); margin-bottom:5px;">마음 치유 리스트</h1>
+        <p style="color:#666; font-size:0.9rem;">증상을 선택하여 치유 확언을 확인하세요.</p>
     </div>
-    <div class="card-container-healing" id="healingContainer"></div>
+    <div class="list-container" id="healingList"></div>
 </div>
 
 <div id="sensation-section" class="tab-content">
-    <div class="header-s">
-        <h1>신체 감각 사전</h1>
-        <p>현재 내 신체의 감각들을 관찰해보세요.</p>
+    <div style="text-align:center;">
+        <h1 style="color:var(--text-main); margin-bottom:5px;">신체 감각 리스트</h1>
+        <p style="color:#666; font-size:0.9rem;">부위별로 느껴지는 세밀한 감각 언어를 확인하세요.</p>
     </div>
-    <div class="card-container-sensation" id="sensationContainer"></div>
+    <div class="list-container" id="sensationList"></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal-content" id="modalContent">
+        <button class="close-modal">&times;</button>
+        <div id="activeCardContainer"></div>
+    </div>
 </div>
 
 <script>
-// [탭 전환 함수]
-function openTab(tabId, btn) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
-    
-    // 탭을 넘길 때 모든 카드의 'flipped' 클래스를 제거하여 초기화
-    document.querySelectorAll('.flipped').forEach(card => card.classList.remove('flipped'));
-    
-    document.getElementById(tabId).classList.add('active');
-    btn.classList.add('active');
-}
-
-// [데이터 1: 루이스 헤이 치유 카드]
+// 기존 데이터 유지
 const healingData = [
     { part: "머리", disease: "두통", desc: "핵심원인: 자신을 쓸모없다고 비난함, 자책, 공포, 완벽주의로 인한 압박감.", cause: "'나는 부족해', '내가 잘못했어'와 같은 생각들이 머릿속에서 자신을 끊임없이 공격할 때 에너지가 머리에 정체되며 통증이 발생합니다.", aff: "나는 나 자신을 사랑하고 수용한다. 나는 사랑의 눈으로 나 자신과 내가 하는 일을 바라본다. 나는 안전하다." },
     { part: "머리", disease: "편두통", desc: "핵심원인: 완벽주의에 대한 강박, 강한 자기 비판, 삶의 흐름에 대한 저항, 성적인 두려움(혹은 압박감).", cause: "주로 자신을 완벽하게 통제하려는 성향이 강한 사람들에게 나타납니다. 타인에 의해 몰아세워지는 느낌을 받거나, 스스로를 과도하게 채찍질할 때 신체가 '강제 정지' 신호를 보내는 것입니다.", aff: "나는 삶의 흐름에 내 몸을 맡긴다. 삶이 나에게 필요한 모든 것을 편안하고 쉽게 제공하도록 허용한다. 삶은 나를 위해 존재한다."},
@@ -153,135 +206,198 @@ const healingData = [
     { part: "코", disease: "비염", desc: "핵심원인: 감정적 억압. 자신의 가치에 대한 의구심. 눈물을 흘리지 못함.", cause: "비염은 심리적으로 '감정적인 눈물'을 코로 흘리는 것과 같습니다. 주변 환경으로부터 압박감을 느껴 '숨 쉴 틈이 없다'고 체감할 때 나타납니다.", aff: "나는 내 삶의 주인공으로서 당당하게 숨을 쉽니다. 나는 온전하고 가치 있는 존재입니다." },
     { part: "손목", disease: "손목 통증", desc: "핵심원인: 유연함의 결여. 활동에 대한 과도한 압박. 일의 흐름을 통제하려는 욕구.", cause: "손목에 문제가 생기는 것은 현재 자신이 하는 일에 대해 심한 압박을 느끼거나, 상황을 억지로 통제하려 할 때 발생합니다.", aff: "나는 모든 경험을 유연하고 편안하게 다룹니다. 나는 삶의 흐름에 나를 맡깁니다." },
     { part: "기관지", disease: "잔기침", desc: "핵심원인: 비판과 비난에 대한 두려움. 억눌린 자기표현. '나를 좀 봐달라'는 외침.", cause: "기침은 내면에서 소화되지 못한 감정이나 하고 싶은 말을 억지로 삼켰을 때, 그것이 '나 여기 있다'며 밖으로 튀어나오는 신호입니다.", aff: "나는 나 자신을 자유롭고 안전하게 표현합니다. 세상은 나의 말을 경청합니다." },
-{ 
-    part: "생식기", 
-    disease: "생리통", 
-    desc: "핵심원인: 자신의 여성성(또는 부드러움)에 대한 거부. 죄책감과 두려움. 육체적 본능에 대한 부정적인 신념. 수용의 어려움.", 
-    cause: "생리통은 심리적으로 자신의 여성적인 측면이나 생물학적 리듬을 온전히 받아들이지 못할 때 발생하곤 합니다. 사회적으로 강요된 '강해야 한다'는 압박감이나, 부드러움과 섬세함을 나약함으로 오해하여 억압할 때 몸이 통증으로 저항하는 것입니다. 또한 과거의 부정적인 성적 고정관념이나 자신을 돌보는 것에 대한 무의식적인 죄책감이 통증을 가중시키기도 합니다.", 
-    aff: "나는 나의 몸과 그 리듬을 사랑으로 축복합니다. 나는 내 안의 모든 여성성과 부드러움을 기쁘게 수용합니다. 나는 나 자신을 아끼고 돌볼 자격이 충분하며, 나의 모든 과정은 아름답고 자연스럽습니다." 
-},
-{ 
-    part: "발", 
-    disease: "무좀", 
-    desc: "핵심원인: 과거에 발목이 잡힘. 앞으로 나아가는 것에 대한 좌절감. 수용받지 못했다는 느낌. 사소한 일에 대한 과도한 집착.", 
-    cause: "발은 우리가 세상으로 나아가는 '진보'와 '이동'을 상징합니다. 무좀은 심리적으로 과거의 상처나 오래된 감정적 찌꺼기가 현재의 발걸음을 무겁게 만들 때 발생합니다. 현재의 삶이 답답하게 느껴지거나, 자신이 원하는 방향으로 나아가지 못한다는 좌절감이 발의 피부를 통해 나타나는 것입니다. 타인에게 인정받지 못했다는 서운함이 '가려움'이라는 자극으로 표출되기도 합니다.", 
-    aff: "나는 과거를 기꺼이 놓아주고 기쁜 마음으로 앞으로 나아갑니다. 나는 내 삶의 모든 진보를 축복합니다. 나는 안전하며, 내가 가는 길은 언제나 평탄하고 조화롭습니다." 
-},
-{ 
-    part: "가슴 / 유두", 
-    disease: "유두 통증 및 트러블", 
-    desc: "핵심원인: 양육과 보살핌에 대한 갈등. 과도한 책임감. 자신을 돌보지 못하는 것에 대한 분노. 정서적 영양 결핍.", 
-    cause: "유두는 생물학적으로 영양을 공급하고 보살피는 '양육'의 상징적 지점입니다. 이곳에 문제가 생기는 것은 타인을 돌봐야 한다는 강박적인 책임감에 짓눌려 정작 자신을 돌보지 못할 때 나타납니다. '누가 나를 돌봐줄 것인가'에 대한 결핍감이나, 주변의 요구가 지나치게 버겁다고 느낄 때 몸은 통증을 통해 '더 이상 내어줄 것이 없다'는 신호를 보냅니다.", 
-    aff: "나는 나 자신을 먼저 사랑으로 가득 채웁니다. 나는 타인을 돌보는 것만큼 나를 돌보는 일도 중요함을 압니다. 나는 기쁜 마음으로 사랑을 주고받으며, 내 안의 양분은 언제나 충분하고 조화롭습니다." 
-},
-{ 
-    part: "항문", 
-    disease: "치질", 
-    desc: "핵심원인: 마감 시한에 대한 압박. 과거에 대한 강한 집착. 내보내지 못하는 분노. 무거운 짐을 지고 있다는 느낌.", 
-    cause: "항문은 불필요한 것을 내보내는 '방출'과 '완료'의 통로입니다. 치질은 심리적으로 무언가를 놓아주는 것에 대한 두려움이나 어려움을 상징합니다. 과거의 상처, 오래된 원한, 혹은 끝내야 할 일을 붙잡고 있을 때 항문 주위의 압력이 높아집니다. 특히 마감 기한에 쫓기거나 완벽하게 마무리해야 한다는 중압감이 극심할 때, 우리 몸은 '내보내는 과정'에서 고통을 겪게 됩니다.", 
-    aff: "나는 불필요한 모든 것을 기쁘고 편안하게 놓아줍니다. 나는 과거로부터 자유로우며 오직 현재의 평온함을 선택합니다. 삶의 흐름은 안전하고 완벽하며, 나는 충분한 시간과 여유를 가지고 있습니다." 
-},
-{ 
-    part: "대장", 
-    disease: "변비", 
-    desc: "핵심원인: 낡은 생각에 대한 집착. 인색함. 버리는 것에 대한 두려움. 감정의 정체.", 
-    cause: "변비는 심리적으로 '축적'과 '집착'을 의미합니다. 과거의 고통스러운 기억, 불필요해진 신념, 혹은 물질적인 것에 지나치게 매달릴 때 우리 몸은 배설을 멈추고 그것들을 움켜쥡니다. '이것을 놓아버리면 안전하지 않을 것 같다'는 무의식적인 불안감이 흐름을 막고 있는 것입니다. 새로운 것이 들어올 자리를 만들기 위해 낡은 것을 비워내지 못하는 상태를 투영합니다.", 
-    aff: "나는 과거를 기꺼이 놓아주고 새로운 생명력을 받아들입니다. 나는 삶의 흐름이 나를 안전하게 인도할 것임을 믿습니다. 나는 내 안의 모든 불필요한 것들을 사랑으로 흘려보내며, 나의 몸과 마음은 가볍고 자유롭습니다." 
-},
+    { part: "생식기", disease: "생리통", desc: "핵심원인: 자신의 여성성 거부. 죄책감과 두려움. 수용의 어려움.", cause: "자신의 여성적인 측면이나 생물학적 리듬을 온전히 받아들이지 못할 때 몸이 통증으로 저항하는 것입니다.", aff: "나는 나의 몸과 그 리듬을 사랑으로 축복합니다. 나는 부드러움을 기쁘게 수용합니다." },
+    { part: "발", disease: "무좀", desc: "핵심원인: 과거에 발목이 잡힘. 나아가는 것에 대한 좌절감. 사소한 집착.", cause: "과거의 상처나 오래된 감정적 찌꺼기가 현재의 발걸음을 무겁게 만들 때 발생합니다.", aff: "나는 과거를 놓아주고 기쁜 마음으로 앞으로 나아갑니다." },
+    { part: "가슴", disease: "유두 통증", desc: "핵심원인: 양육에 대한 갈등. 과도한 책임감. 자신을 돌보지 못함.", cause: "타인을 돌봐야 한다는 강박에 짓눌려 정작 자신을 돌보지 못할 때 몸은 통증을 보냅니다.", aff: "나는 나 자신을 먼저 사랑으로 가득 채웁니다. 내 안의 양분은 충분합니다." },
+    { part: "항문", disease: "치질", desc: "핵심원인: 마감 압박. 과거에 대한 집착. 내보내지 못하는 분노.", cause: "무언가를 놓아주는 것에 대한 두려움을 상징합니다. 낡은 원한이나 끝내야 할 일을 붙잡고 있을 때 항문 압력이 높아집니다.", aff: "나는 불필요한 모든 것을 기쁘고 편안하게 놓아줍니다." },
+    { part: "대장", disease: "변비", desc: "핵심원인: 낡은 생각에 대한 집착. 인색함. 버리는 것에 대한 두려움.", cause: "과거의 고통이나 불필요해진 신념을 움켜쥐고 있을 때 배설이 멈춥니다. 비워내지 못하는 상태를 투영합니다.", aff: "나는 과거를 놓아주고 새로운 생명력을 받아들입니다." },
+    { part: "대장", disease: "설사", desc: "핵심원인: 거부. 도피. 두려움. 상황을 소화하지 못하고 내던짐.", cause: "상황을 감당하기 힘들 때, 충분히 흡수하지 않은 채 밖으로 밀어내는 '격렬한 거부'를 의미합니다.", aff: "나는 삶의 모든 경험을 편안하게 소화합니다. 나는 안전합니다." },
+    { part: "피부", disease: "가려움", desc: "핵심원인: 억눌린 욕구, 초조함, 불만족.", cause: "마음의 화나 욕망이 밖으로 나가지 못하고 표면에서 맴도는 상태입니다. 타인으로부터의 침범에 대한 저항 신호입니다.", aff: "나는 지금 이 순간 평온합니다. 나는 안전하며, 모든 불필요한 감정을 사랑으로 흘려보냅니다." }
+];
 
-{ 
-    part: "대장", 
-    disease: "설사", 
-    desc: "핵심원인: 거부. 도피. 두려움. 아이디어나 상황을 소화하지 못하고 성급히 내던짐.", 
-    cause: "설사는 심리적으로 어떤 상황이나 감정을 감당하기 힘들 때, 그것을 충분히 검토하거나 흡수하지 않은 채 몸 밖으로 밀어내는 '격렬한 거부'를 의미합니다. 새로운 변화나 아이디어에 대한 두려움 때문에 이를 소화(수용)할 시간도 없이 서둘러 끝내버리고 싶을 때 발생합니다. 현재 직면한 문제로부터 도망치고 싶어 하는 무의식적인 불안감이 장의 운동을 가속화하는 결과로 나타납니다.", 
-    aff: "나는 삶의 모든 경험을 편안하게 받아들이고 소화합니다. 나는 내게 들어오는 모든 좋은 것들을 흡수할 충분한 시간과 능력이 있습니다. 나는 안전하며, 나의 세상은 조화롭고 평화롭습니다." 
+// 신체 감각 사전 데이터 (설명 포함)
+const sensations = [
+    { cat: "머리/신경", part: "머리 속", desc: "사고의 명료함과 뇌의 긴장도를 관찰합니다.", 
+      items: [
+        {f: "맑음", e: "안개가 걷힌 듯 시원하고 투명한 느낌"},
+        {f: "멍함", e: "구름이 낀 듯 사고가 느려지고 무딘 상태"},
+        {f: "지끈거림", e: "일정한 박자로 머리 안쪽이 울리는 통증"},
+        {f: "핑 도는", e: "중심을 잃거나 시야가 순간 흔들리는 어지러움"},
+        {f: "압박감", e: "머리 전체를 띠로 꽉 조이는 듯한 갑갑함"},
+        {f: "맥박뜀", e: "심장 소리가 머리에서 느껴지는 듯한 박동"}
+      ] 
+    },
+    { cat: "호흡/흉부", part: "목/기도", desc: "삼킴과 호흡의 통로 이완도를 봅니다.", 
+      items: [
+        {f: "이물감", e: "뭔가 걸린 듯 삼키기 불편한 느낌"},
+        {f: "조임", e: "목 근육이 수축하여 통로가 좁아진 느낌"},
+        {f: "탁 막힘", e: "숨이 깊게 들어가지 못하고 걸리는 느낌"},
+        {f: "간질임", e: "기침이 나올 것 같은 가벼운 자극"},
+        {f: "메임", e: "감정이 차올라 목 근육이 굳어지는 느낌"}
+      ] 
+    },
+    { cat: "호흡/흉부", part: "가슴/폐", desc: "감정의 수용 공간과 호흡 깊이를 느낍니다.", 
+      items: [
+        {f: "답답함", e: "가슴 위에 무거운 돌을 얹은 듯한 막막함"},
+        {f: "팽창함", e: "가슴이 벅차오르거나 부풀어 오른 듯한 느낌"},
+        {f: "뻥 뚫림", e: "막혔던 것이 내려가고 시원해진 해방감"},
+        {f: "짓눌림", e: "슬픔이나 압박감으로 가슴이 오그라드는 느낌"},
+        {f: "울렁임", e: "심장 근처가 불안하게 일렁이는 감각"}
+      ] 
+    },
+    { cat: "순환/에너지", part: "심장", desc: "생동감과 감정적 리듬을 확인합니다.", 
+      items: [
+        {f: "두근거림", e: "긴장이나 설렘으로 빨라진 심장 박동"},
+        {f: "덜컥거림", e: "순간적으로 심장이 내려앉는 듯한 충격"},
+        {f: "잔잔함", e: "평온하고 규칙적인 평화로운 상태"},
+        {f: "조여듦", e: "불안이나 통증으로 심장 부근이 수축함"},
+        {f: "느림", e: "에너지가 떨어져 맥박이 무겁고 느린 느낌"}
+      ] 
+    },
+    { cat: "소화/중심", part: "명치/위", desc: "외부 자극 수용력과 긴장 상태를 봅니다.", 
+      items: [
+        {f: "딱딱함", e: "긴장으로 명치 부근 근육이 돌처럼 굳음"},
+        {f: "꼬이는", e: "위장이 빨래를 짜듯 뒤틀리는 날카로운 감각"},
+        {f: "메스꺼움", e: "받아들이기 힘든 거부감이나 구역질"},
+        {f: "허전함", e: "위장이 텅 빈 듯 쓸쓸하고 공허한 감각"},
+        {f: "쓰림", e: "산이 올라오는 듯 타오르는 화끈거림"}
+      ] 
+    },
+    { cat: "근골격", part: "어깨/등", desc: "삶의 무게를 지탱하는 부위의 피로도를 봅니다.", 
+      items: [
+        {f: "결림", e: "근육이 뭉쳐 움직일 때마다 뻐근한 자극"},
+        {f: "무거움", e: "어깨에 곰 한 마리가 올라앉은 듯한 피로"},
+        {f: "타는 듯한", e: "신경이 눌리거나 과로로 열이 나는 감각"},
+        {f: "담 걸림", e: "숨도 쉬기 힘들 정도로 갑자기 굳은 통증"},
+        {f: "쑤심", e: "바늘로 찌르는 듯 깊은 곳에서 느껴지는 통증"}
+      ] 
+    },
+    { cat: "얼굴/눈/입", part: "얼굴 전체", desc: "안면 근육의 떨림, 눈의 피로도, 입안의 감각을 관찰합니다.", 
+      items: [
+        {f: "화끈거림", e: "얼굴 전체로 열이 오르며 피부가 팽창하는 듯한 열감"},
+        {f: "뻣뻣함", e: "표정을 짓기 어려울 정도로 안면 근육이 굳어 있는 감각"},
+        {f: "침침함", e: "눈앞이 흐릿하고 초점을 맞추기 힘든 피로한 상태"},
+        {f: "따끔거림", e: "눈이나 피부 표면이 건조하여 모래가 들어간 듯한 통증"},
+        {f: "바짝 마름", e: "입안에 침이 마르고 혀가 입천장에 달라붙는 듯한 갈증"},
+        {f: "악물음", e: "자신도 모르게 턱에 힘이 들어가 치아가 맞물린 상태"},
+        {f: "경련", e: "눈 밑이나 입꼬리 근육이 의지와 상관없이 잘게 떨림"}
+      ] 
+    },
+
+    { cat: "팔/다리", part: "팔과 다리", desc: "사지의 무게감과 근육의 긴장, 에너지의 흐름을 관찰합니다.", 
+      items: [
+        {f: "가뿐함", e: "몸이 깃털처럼 가볍고 곧바로 움직일 수 있을 듯한 활력"},
+        {f: "천근만근", e: "팔다리에 모래주머니를 단 듯 바닥으로 가라앉는 무게감"},
+        {f: "후들거림", e: "무릎이나 팔에 힘이 빠져 의지와 상관없이 떨리는 상태"},
+        {f: "저릿함", e: "전기가 통하는 듯 찌릿하거나 피가 안 통하는 듯한 감각"},
+        {f: "욱신거림", e: "근육 깊은 곳에서부터 열감이 느껴지며 쑤시는 통증"},
+        {f: "힘이 들어감", e: "언제든 튀어 나갈 듯 근육이 팽팽하게 수축된 상태"}
+      ] 
+    },
+    { cat: "손/발", part: "손가락/발가락", desc: "손발의 온도, 습도, 미세한 떨림을 관찰합니다.", 
+      items: [
+        {f: "따스함", e: "끝단까지 온기가 전달되어 부드럽고 이완된 상태"},
+        {f: "축축함", e: "긴장으로 인해 손바닥이나 발바닥에 땀이 배어 나오는 상태"},
+        {f: "얼음장", e: "혈액 순환이 더뎌져 끝부분이 차갑게 식어버린 느낌"},
+        {f: "꼼지락거림", e: "불안이나 초조함으로 인해 가만히 두지 못하고 움직임"},
+        {f: "꽉 쥐어짐", e: "손가락 끝에 힘이 들어가 주먹을 세게 쥐고 있는 상태"},
+        {f: "무감각", e: "남의 살처럼 느껴지거나 감각이 둔해져 멍멍한 기분"}
+      ] 
+    },
+
+];
+
+// 탭 전환
+function openTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
 }
 
-
-
-
-
-];
-
-// [마음 치유 카드 렌더링]
-const hContainer = document.getElementById('healingContainer');
-healingData.forEach(item => {
-    const cardWrapper = document.createElement('div');
-    cardWrapper.className = 'card-h';
-    cardWrapper.onclick = function() { 
-        document.querySelectorAll('.card-h.flipped').forEach(card => {
-            if (card !== this) card.classList.remove('flipped');
-        });
-        this.classList.toggle('flipped'); 
-    };
-    cardWrapper.innerHTML = `
-        <div class="card-inner-h">
-            <div class="card-front-h">
-                <span class="part-tag-h">${item.part}</span>
-                <div class="symptom-name-h">${item.disease}</div>
-                <div class="symptom-desc-h">${item.desc}</div>
-                <div class="click-hint-h">터치하여 치유 메시지 보기</div>
-            </div>
-            <div class="card-back-h">
-                <div class="back-part-info-h">${item.part}: ${item.disease}</div>
-                <div class="back-section-title-h">심리적 원인</div>
-                <div class="cause-h">${item.cause}</div>
-                <div class="back-section-title-h">치유의 확언</div>
-                <div class="affirmation-h">"${item.aff}"</div>
-            </div>
-        </div>`;
-    hContainer.appendChild(cardWrapper);
+// 리스트 렌더링
+const hList = document.getElementById('healingList');
+healingData.forEach((item, index) => {
+    const div = document.createElement('div');
+    div.className = 'list-item';
+    div.innerHTML = `<span class="item-part">${item.part}</span><span class="item-name">${item.disease}</span>`;
+    div.onclick = () => showModal('healing', index);
+    hList.appendChild(div);
 });
 
-// [데이터 2: 상세 신체 감각 사전]
-const sensations = [
-    { cat: "머리/신경", part: "머리 속", desc: "사고의 명료함과 뇌의 긴장도를 관찰합니다.", feel: "맑음, 멍함, 지끈거림, 핑 도는, 압박감, 무거운, 가벼운, 맥박뜀, 묵직함" },
-    { cat: "머리/신경", part: "얼굴/눈/입", desc: "표정 근육의 경직과 오감의 예민도를 살핍니다.", feel: "침침함, 경직됨, 입마름, 화끈함, 실룩임, 얼얼함, 가려움, 따끔" },
-    { cat: "호흡/흉부", part: "목/기도", desc: "삼킴과 호흡의 통로가 얼마나 이완되어 있는지 봅니다.", feel: "이물감, 조임, 탁 막힘, 서늘함, 가래낌, 메임, 간질임, 부음" },
-    { cat: "호흡/흉부", part: "가슴/폐", desc: "감정의 수용 공간이자 호흡의 깊이를 느껴봅니다.", feel: "답답함, 팽창함, 뻥 뚫림, 짓눌림, 숨 가쁨, 미어짐, 텅 빔, 울렁임" },
-    { cat: "순환/에너지", part: "심장", desc: "생동감의 근원이자 감정적 리듬을 확인합니다.", feel: "두근거림, 덜컥거림, 잔잔함, 쿵쾅거림, 불규칙함, 벅참, 조여듦, 느림" },
-    { cat: "소화/중심", part: "명치/위", desc: "외부의 자극을 소화하는 힘과 긴장 상태를 관찰합니다.", feel: "딱딱함, 꼬이는, 쥐어짜는, 메스꺼움, 뒤틀림, 묵직함, 허전함, 쓰림" },
-    { cat: "소화/중심", part: "아랫배/장", desc: "본능적인 안정감과 처리되지 못한 감정을 살핍니다.", feel: "부글거림, 꾸륵거림, 싸한 느낌, 가스참, 따뜻함, 팽팽함, 뒤틀림, 쑥 내려감" },
-    { cat: "근골격", part: "어깨/등", desc: "삶의 무게를 지탱하는 부위의 피로도를 체크합니다.", feel: "결림, 뻐근함, 무거움, 타는 듯한, 담 걸림, 굳음, 이완됨, 쑤심" },
-    { cat: "사지/피부", part: "팔/다리/손발", desc: "행동력과 말단 부위의 혈액 순환 상태를 느껴봅니다.", feel: "힘빠짐, 저림, 찌릿함, 나른함, 부어있는, 가려움, 서늘함, 온기" },
-    { cat: "전신", part: "피부 겉면", desc: "외부 세계와의 경계면에서 느껴지는 방어 기제를 봅니다.", feel: "소름, 땀남, 전율, 따끔함, 스멀거림, 예민함, 무감각, 화끈화끈" }
-];
+const sList = document.getElementById('sensationList');
+sensations.forEach((item, index) => {
+    const div = document.createElement('div');
+    div.className = 'list-item';
+    div.innerHTML = `<span class="item-part">${item.cat}</span><span class="item-name">${item.part}</span>`;
+    div.onclick = () => showModal('sensation', index);
+    sList.appendChild(div);
+});
 
-// [신체 감각 사전 렌더링]
-const sContainer = document.getElementById('sensationContainer');
-sensations.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'card-s';
-    const feelArray = item.feel.split(', ');
-    const half = Math.ceil(feelArray.length / 2);
-    const leftSide = feelArray.slice(0, half).map(f => `<span class="sensation-item-s">• ${f}</span>`).join('');
-    const rightSide = feelArray.slice(half).map(f => `<span class="sensation-item-s">• ${f}</span>`).join('');
+// 모달 열기
+function showModal(type, index) {
+    const container = document.getElementById('activeCardContainer');
+    container.innerHTML = '';
+    let cardHtml = '';
 
-    card.innerHTML = `
-        <div class="card-inner-s">
-            <div class="card-front-s">
-                <span class="category-s">${item.cat}</span>
-                <span class="part-name-s">${item.part}</span>
-                <div class="symptom-desc-h" style="margin-top:15px; margin-bottom:0; text-align: center; width: 100%;">${item.desc}</div>
-                <div class="click-hint-h" style="margin-top:20px; color:#999;">터치하여 감각 단어 보기</div>
-            </div>
-            <div class="card-back-s">
-                <div class="back-header-s">${item.part} 감각</div>
-                <div class="split-container-s">
-                    <div class="side-s">${leftSide}</div>
-                    <div class="side-s">${rightSide}</div>
+    if (type === 'healing') {
+        const item = healingData[index];
+        cardHtml = `
+            <div class="card-h" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front front-h">
+                        <span class="part-tag-h">${item.part}</span>
+                        <div class="symptom-name-h">${item.disease}</div>
+                        <div class="symptom-desc-h">${item.desc}</div>
+                        <div class="click-hint">카드를 터치하여 뒤집기</div>
+                    </div>
+                    <div class="card-back back-h">
+                        <div class="back-part-info-h">${item.part}: ${item.disease}</div>
+                        <div class="back-section-title-h">심리적 원인</div>
+                        <div class="cause-h">${item.cause}</div>
+                        <div class="back-section-title-h">치유의 확언</div>
+                        <div class="affirmation-h">"${item.aff}"</div>
+                    </div>
                 </div>
+            </div>`;
+    } else {
+        const item = sensations[index];
+        const itemsHtml = item.items.map(i => `
+            <div class="sensation-item">
+                <span class="sensation-label">${i.f}</span>
+                <span class="sensation-explain">${i.e}</span>
             </div>
-        </div>`;
+        `).join('');
+        
+        cardHtml = `
+            <div class="card-s" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front front-s">
+                        <span class="category-s">${item.cat}</span>
+                        <span class="part-name-s">${item.part}</span>
+                        <p style="font-size:0.9rem; color:#666; margin-top:15px; padding: 0 20px;">${item.desc}</p>
+                        <div class="click-hint">카드를 터치하여 뒤집기</div>
+                    </div>
+                    <div class="card-back back-s">
+                        <div class="back-header-s">${item.part} 감각 사전</div>
+                        <div class="sensation-list-container">
+                            ${itemsHtml}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+    }
 
-    card.addEventListener('click', function() {
-        document.querySelectorAll('.card-s.flipped').forEach(openCard => {
-            if (openCard !== this) openCard.classList.remove('flipped');
-        });
-        this.classList.toggle('flipped');
-    });
-    sContainer.appendChild(card);
-});
+    container.innerHTML = cardHtml;
+    document.getElementById('modalOverlay').style.display = 'flex';
+}
+
+// 모달 닫기
+function closeModal(e) {
+    if (e.target.id === 'modalOverlay' || e.target.className === 'close-modal' || e.target.closest('.close-modal')) {
+        document.getElementById('modalOverlay').style.display = 'none';
+    }
+}
 </script>
 
 </body>
