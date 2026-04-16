@@ -51,7 +51,7 @@
             width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;
             font-family: inherit; font-size: 1rem; transition: border-color 0.2s;
         }
-        .input-group textarea { resize: none; overflow-y: hidden; min-height: 120px; line-height: 1.5; }
+        .input-group textarea { resize: none; overflow-y: hidden; min-height: 100px; line-height: 1.5; }
         .input-group input:focus, .input-group textarea:focus { outline: none; border-color: var(--primary); border-width: 2px; }
 
         .save-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
@@ -452,7 +452,7 @@ function saveRecord() {
     ['rec-sensation', 'rec-symptom', 'rec-event', 'rec-thought', 'rec-affirmation'].forEach(id => {
         const el = document.getElementById(id);
         el.value = '';
-        el.style.height = '120px';
+        el.style.height = '100px';
     });
     loadHistory();
 }
