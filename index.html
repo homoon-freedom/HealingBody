@@ -537,23 +537,49 @@ function updateRecord(id) {
 async function shareCardImage(id) {
     const cardElement = document.getElementById(`card-${id}`);
     const buttons = cardElement.querySelector('.card-buttons');
-    buttons.style.display = 'none';
+    
+    // 1. 공유 시 버튼 제외
+    buttons.style.display = 'none'; 
+    
     try {
-        const canvas = await html2canvas(cardElement, { backgroundColor: "#f8f9fa", scale: 2, useCORS: true });
+        // 2. html2canvas로 캡처 (여백과 품질 최적화)
+        const canvas = await html2canvas(cardElement, { 
+            backgroundColor: "#ffffff", 
+            scale: 2, 
+            useCORS: true,
+            logging: false,
+            borderRadius: 20
+        });
+        
         canvas.toBlob(async (blob) => {
-            const file = new File([blob], 'mind_record.png', { type: 'image/png' });
+            if (!blob) return;
+            const file = new File([blob], `mind_observation.png`, { type: 'image/png' });
+
+            // 3. Web Share API 사용 (이미지만 공유되도록 설정)
             if (navigator.share && navigator.canShare({ files: [file] })) {
-                await navigator.share({ files: [file], title: '마음 관찰 기록' });
+                try {
+                    await navigator.share({
+                        files: [file] // title, text를 제거하여 이미지만 공유 유도
+                    });
+                } catch (shareErr) {
+                    console.log("공유 취소 또는 오류:", shareErr);
+                }
             } else {
+                // 4. 공유 기능을 지원하지 않는 브라우저는 자동 다운로드로 대체
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = `mind-record-${Date.now()}.png`;
+                link.download = `마음관찰_${new Date().getTime()}.png`;
                 link.click();
             }
-        });
-    } catch (err) { alert("오류 발생"); }
-    finally { buttons.style.display = 'flex'; }
+        }, 'image/png');
+    } catch (err) { 
+        alert("이미지 생성에 실패했습니다."); 
+    } finally { 
+        // 5. 작업 완료 후 버튼 다시 표시
+        buttons.style.display = 'flex'; 
+    }
 }
+
 
 function deleteRecord(id) {
     if(confirm("삭제하시겠습니까?")) {
