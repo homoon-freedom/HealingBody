@@ -51,7 +51,7 @@
             width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;
             font-family: inherit; font-size: 1rem; transition: border-color 0.2s;
         }
-        .input-group textarea { resize: none; overflow-y: hidden; min-height: 100px; line-height: 1.5; }
+        .input-group textarea { resize: none; overflow-y: hidden; min-height: 120px; line-height: 1.5; }
         .input-group input:focus, .input-group textarea:focus { outline: none; border-color: var(--primary); border-width: 2px; }
 
         .save-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
@@ -71,12 +71,21 @@
         }
         .history-item strong { color: var(--primary); display: block; font-size: 0.8rem; margin-bottom: 4px; background: rgba(108, 92, 231, 0.05); padding: 2px 8px; border-radius: 4px; width: fit-content; white-space: nowrap; }
         
-        .card-buttons { display: flex; gap: 8px; margin-top: 20px; justify-content: flex-end; border-top: 1px solid #f1f1f1; padding-top: 12px; }
-        .action-btn { padding: 8px 14px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: 0.2s; }
+        /* 버튼 크기 및 폰트 크기 상향 조정 */
+        .card-buttons { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; border-top: 1px solid #f1f1f1; padding-top: 15px; }
+        .action-btn { 
+            padding: 10px 18px; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-size: 0.95rem; 
+            font-weight: bold; 
+            transition: 0.2s; 
+        }
         .share-btn { background: #55efc4; color: #00b894; }
         .edit-btn { background: #74b9ff; color: white; }
         .delete-btn { background: #ff7675; color: white; }
-        .update-btn { background: var(--primary); color: white; width: 100%; margin-top: 15px; padding: 12px; }
+        .update-btn { background: var(--primary); color: white; width: 100%; margin-top: 15px; padding: 14px; font-size: 1rem; }
 
         .add-to-rec {
             display: inline-flex; align-items: center; justify-content: center;
@@ -85,7 +94,7 @@
             cursor: pointer; border: none; vertical-align: middle; transition: 0.2s;
         }
 
-        .edit-input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid var(--secondary); border-radius: 6px; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; }
+        .edit-input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid var(--secondary); border-radius: 6px; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; min-height: 100px; resize: none; overflow-y: hidden; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
         .modal-content { width: 90%; max-width: 420px; position: relative; perspective: 2000px; }
@@ -132,7 +141,7 @@
     </div>
 
     <div style="background:white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-        <div class="input-group"><label>1. 신체의 감각</label><textarea id="rec-sensation" placeholder="예: 가슴이 답답함, 손 끝이 떨림" oninput="autoResize(this)"></textarea></div>
+        <div class="input-group"><label>1. 신체의 감각</label><textarea id="rec-sensation" placeholder="예: 가슴이 답답함" oninput="autoResize(this)"></textarea></div>
         <div class="input-group"><label>2. 몸의 증상</label><textarea id="rec-symptom" placeholder="예: 두통, 소화불량" oninput="autoResize(this)"></textarea></div>
         <div class="input-group"><label>3. 추측되는 사건</label><textarea id="rec-event" placeholder="어떤 상황이 감각과 증상을 만들었나요?" oninput="autoResize(this)"></textarea></div>
         <div class="input-group"><label>4. 사건이 일으킨 생각</label><textarea id="rec-thought" placeholder="나를 힘들게 하는 머릿속 생각들" oninput="autoResize(this)"></textarea></div>
@@ -275,15 +284,11 @@ const sensations = [
 
 window.onload = () => { renderHealingList(); renderSensationList(); loadHistory(); };
 
-// 불렛포인트 및 개행 처리 핵심 로직
 function handleBullet(textarea) {
     if (!textarea) return;
-    
-    // 처음 글을 쓸 때 불렛 자동 삽입
     if (textarea.value.length > 0 && !textarea.value.startsWith('• ')) {
         textarea.value = '• ' + textarea.value;
     }
-
     if (!textarea.dataset.bulletBound) {
         textarea.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
@@ -291,8 +296,6 @@ function handleBullet(textarea) {
                 const start = this.selectionStart;
                 const end = this.selectionEnd;
                 const value = this.value;
-
-                // 줄바꿈 시 다음 줄에도 불렛 자동 삽입
                 this.value = value.substring(0, start) + "\n• " + value.substring(end);
                 this.selectionStart = this.selectionEnd = start + 3;
                 autoResize(this);
@@ -302,7 +305,6 @@ function handleBullet(textarea) {
     }
 }
 
-// 텍스트 영역 높이 자동 조절
 function autoResize(textarea) {
     if (!textarea) return;
     handleBullet(textarea);
@@ -310,22 +312,17 @@ function autoResize(textarea) {
     textarea.style.height = (textarea.scrollHeight) + 'px';
 }
 
-// 사전에서 데이터 추가 시 로직
 function fillRecord(targetId, text, btn) {
     const input = document.getElementById(targetId);
     const bulletText = text.startsWith('• ') ? text : `• ${text}`;
-    
-    if (input.value) {
+    if (input.value.trim()) {
         const lastChar = input.value.trim().slice(-1);
         const separator = input.value.endsWith('\n') ? '' : '\n';
         input.value += `${separator}${bulletText}`;
     } else {
         input.value = bulletText;
     }
-    
-    // 추가 후 높이 즉시 갱신
     autoResize(input);
-
     if (btn) {
         const originalText = btn.innerText;
         btn.innerText = '✓';
@@ -441,18 +438,15 @@ function saveRecord() {
     const event = document.getElementById('rec-event').value;
     const thought = document.getElementById('rec-thought').value;
     const affirmation = document.getElementById('rec-affirmation').value;
-    
     if (!sensation && !symptom && !event && !thought && !affirmation) return alert("입력해주세요.");
-    
     const record = { id: Date.now(), date: new Date().toLocaleString(), sensation, symptom, event, thought, affirmation };
     let history = JSON.parse(localStorage.getItem('mindHistory') || '[]');
     history.unshift(record);
     localStorage.setItem('mindHistory', JSON.stringify(history));
-    
     ['rec-sensation', 'rec-symptom', 'rec-event', 'rec-thought', 'rec-affirmation'].forEach(id => {
         const el = document.getElementById(id);
         el.value = '';
-        el.style.height = '100px';
+        el.style.height = '120px';
     });
     loadHistory();
 }
@@ -503,8 +497,6 @@ function enableEdit(id) {
         <button class="action-btn" style="width:100%; margin-top:5px; background:#eee;" onclick="loadHistory()">취소</button>
     </div>`;
     btnsDiv.style.display = 'none';
-    
-    // 수정 모드 진입 시 각 영역 높이 조절
     ['edit-sensation-', 'edit-symptom-', 'edit-event-', 'edit-thought-', 'edit-affirmation-'].forEach(prefix => {
         const el = document.getElementById(prefix + id);
         if (el) autoResize(el);
@@ -531,11 +523,7 @@ async function shareCardImage(id) {
     const buttons = cardElement.querySelector('.card-buttons');
     buttons.style.display = 'none'; 
     try {
-        const canvas = await html2canvas(cardElement, { 
-            backgroundColor: "#ffffff", 
-            scale: 2,
-            useCORS: true
-        });
+        const canvas = await html2canvas(cardElement, { backgroundColor: "#ffffff", scale: 2, useCORS: true });
         canvas.toBlob(async (blob) => {
             if (!blob) return;
             const file = new File([blob], `mind_observation_${id}.png`, { type: 'image/png' });
